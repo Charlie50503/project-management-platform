@@ -1,0 +1,16 @@
+<div [class]="'m-3 p-3 rounded-lg border-l-4 ' + getPriorityColor(item.priority) + ' bg-gray-700 hover:shadow-lg transition-all cursor-pointer border border-gray-600'">
+  <div class="flex items-start justify-between mb-2">
+    <div class="flex items-center gap-2">
+      <span class="text-sm">{{ getTypeIcon(item.source) }}</span>
+      <span [class]="'text-xs font-medium ' + getProjectTypeColor(item.type)">{{ item.type }}</span>
+    </div>
+    <lucide-angular [img]="Clock" class="w-3 h-3 text-gray-400"></lucide-angular>
+  </div>
+  <h4 class="font-medium text-gray-300 text-sm mb-2">{{ item.title }}</h4>
+  <div class="flex items-center justify-between text-xs">
+    <span class="text-gray-400">截止：{{ item.dueDate }}</span>
+    <span [class]="'px-2 py-0.5 rounded-full text-xs ' + getStatusColor(item.status)">
+      {{ item.status }}
+    </span>
+  </div>
+</div>

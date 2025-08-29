@@ -1,80 +1,61 @@
-<div [class]="leftOuterCollapsed() ? 'w-8' : 'w-80'" class="bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-300 relative">
-  <button 
-    (click)="toggleCollapse()"
-    class="absolute -right-3 top-4 z-10 bg-gray-700 border border-gray-600 rounded-full p-1 hover:bg-gray-600 shadow-lg transition-colors"
-  >
+<div [class]="leftOuterCollapsed() ? 'w-8' : 'w-80'"
+  class="bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-300 relative">
+  <button (click)="toggleCollapse()"
+    class="absolute -right-3 top-4 z-10 bg-gray-700 border border-gray-600 rounded-full p-1 hover:bg-gray-600 shadow-lg transition-colors">
     @if (leftOuterCollapsed()) {
-      <lucide-angular [img]="ChevronRight" class="w-4 h-4 text-gray-300"></lucide-angular>
+    <lucide-angular [img]="ChevronRight" class="w-4 h-4 text-gray-300"></lucide-angular>
     } @else {
-      <lucide-angular [img]="ChevronLeft" class="w-4 h-4 text-gray-300"></lucide-angular>
+    <lucide-angular [img]="ChevronLeft" class="w-4 h-4 text-gray-300"></lucide-angular>
     }
   </button>
 
   @if (!leftOuterCollapsed()) {
-    <div class="p-4 border-b border-gray-700">
-      <h3 class="font-semibold text-gray-300 flex items-center gap-2 mb-3">
-        <lucide-angular [img]="Folder" class="w-4 h-4"></lucide-angular>
-        身上案件總覽
-      </h3>
-      
-      <div class="grid grid-cols-3 gap-2 mb-3">
-        <div class="bg-gray-700 p-2 rounded text-center border border-gray-600">
-          <div class="text-lg font-bold text-sky-500">2</div>
-          <div class="text-xs text-gray-400">專案</div>
-        </div>
-        <div class="bg-gray-700 p-2 rounded text-center border border-gray-600">
-          <div class="text-lg font-bold text-orange-300">2</div>
-          <div class="text-xs text-gray-400">需求單</div>
-        </div>
-        <div class="bg-gray-700 p-2 rounded text-center border border-gray-600">
-          <div class="text-lg font-bold text-green-400">2</div>
-          <div class="text-xs text-gray-400">代辦</div>
-        </div>
+  <div class="p-4 border-b border-gray-700">
+    <h3 class="font-semibold text-gray-300 flex items-center gap-2 mb-3">
+      <lucide-angular [img]="Folder" class="w-4 h-4"></lucide-angular>
+      身上案件總覽
+    </h3>
+
+    <div class="grid grid-cols-3 gap-2 mb-3">
+      <div class="bg-gray-700 p-2 rounded text-center border border-gray-600">
+        <div class="text-lg font-bold text-sky-500">2</div>
+        <div class="text-xs text-gray-400">專案</div>
       </div>
-      
-      <div class="flex gap-1 flex-wrap">
-        @for (tab of tabs; track tab.key) {
-          <button
-            (click)="setActiveTab(tab.key)"
-            [class]="activeTab() === tab.key 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'"
-            class="px-2 py-1 text-xs rounded flex items-center gap-1 transition-colors"
-          >
-            {{ tab.label }}
-            <span class="bg-white bg-opacity-20 px-1 rounded">{{ tab.count }}</span>
-          </button>
-        }
+      <div class="bg-gray-700 p-2 rounded text-center border border-gray-600">
+        <div class="text-lg font-bold text-orange-300">2</div>
+        <div class="text-xs text-gray-400">需求單</div>
+      </div>
+      <div class="bg-gray-700 p-2 rounded text-center border border-gray-600">
+        <div class="text-lg font-bold text-green-400">2</div>
+        <div class="text-xs text-gray-400">代辦</div>
       </div>
     </div>
 
-    <div class="flex-1 overflow-y-auto">
-      @for (item of allWorkItems(); track item.id) {
-        <div [class]="'m-3 p-3 rounded-lg border-l-4 ' + getPriorityColor(item.priority) + ' bg-gray-700 hover:shadow-lg transition-all cursor-pointer border border-gray-600'">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <span class="text-sm">{{ getTypeIcon(item.source) }}</span>
-              <span [class]="'text-xs font-medium ' + getProjectTypeColor(item.type)">{{ item.type }}</span>
-            </div>
-            <lucide-angular [img]="Clock" class="w-3 h-3 text-gray-400"></lucide-angular>
-          </div>
-          <h4 class="font-medium text-gray-300 text-sm mb-2">{{ item.title }}</h4>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-gray-400">截止：{{ item.dueDate }}</span>
-            <span [class]="'px-2 py-0.5 rounded-full text-xs ' + getStatusColor(item.status)">
-              {{ item.status }}
-            </span>
-          </div>
-        </div>
+    <div class="flex gap-1 flex-wrap">
+      @for (tab of tabs; track tab.key) {
+      <button (click)="setActiveTab(tab.key)" [class]="activeTab() === tab.key 
+              ? 'bg-blue-600 text-white' 
+              : 'bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600'"
+        class="px-2 py-1 text-xs rounded flex items-center gap-1 transition-colors">
+        {{ tab.label }}
+        <span class="bg-white bg-opacity-20 px-1 rounded">{{ tab.count }}</span>
+      </button>
       }
     </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto">
+    @for (item of allWorkItems(); track item.id) {
+    <app-work-item-card [item]="item"></app-work-item-card>
+    }
+  </div>
   } @else {
-    <div class="flex-1 flex flex-col items-center py-4 gap-4">
-      <lucide-angular [img]="Folder" class="w-6 h-6 text-gray-400"></lucide-angular>
-      <div class="text-center">
-        <div class="text-lg font-bold text-gray-300">6</div>
-        <div class="text-xs text-gray-400">案件</div>
-      </div>
+  <div class="flex-1 flex flex-col items-center py-4 gap-4">
+    <lucide-angular [img]="Folder" class="w-6 h-6 text-gray-400"></lucide-angular>
+    <div class="text-center">
+      <div class="text-lg font-bold text-gray-300">6</div>
+      <div class="text-xs text-gray-400">案件</div>
     </div>
+  </div>
   }
 </div>

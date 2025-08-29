@@ -1,10 +1,11 @@
 import { Component, signal, inject } from '@angular/core';
 import { WorkItemService } from '../../../services/work-item';
-import { LucideAngularModule, ChevronRight, ChevronLeft, Folder, Clock } from 'lucide-angular';
+import { WorkItemCardComponent } from '../work-item-card/work-item-card';
+import { LucideAngularModule, ChevronRight, ChevronLeft, Folder } from 'lucide-angular';
 
 @Component({
   selector: 'app-work-list',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, WorkItemCardComponent],
   templateUrl: './work-list.html',
   styleUrl: './work-list.scss'
 })
@@ -17,7 +18,6 @@ export class WorkListComponent {
   ChevronRight = ChevronRight;
   ChevronLeft = ChevronLeft;
   Folder = Folder;
-  Clock = Clock;
   
   allWorkItems = this.workItemService.getAllWorkItems();
   
@@ -36,19 +36,5 @@ export class WorkListComponent {
     this.activeTab.set(tab);
   }
 
-  getPriorityColor(priority: string): string {
-    return this.workItemService.getPriorityColor(priority);
-  }
 
-  getTypeIcon(source: string): string {
-    return this.workItemService.getTypeIcon(source);
-  }
-
-  getStatusColor(status: string): string {
-    return this.workItemService.getStatusColor(status);
-  }
-
-  getProjectTypeColor(type: string): string {
-    return this.workItemService.getProjectTypeColor(type);
-  }
 }

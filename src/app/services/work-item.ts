@@ -21,6 +21,8 @@ export class WorkItemService {
   ]);
 
   getAllWorkItems() {
+    console.log("getAllWorkItems");
+    
     return this.allWorkItems.asReadonly();
   }
 
