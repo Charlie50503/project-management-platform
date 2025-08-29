@@ -4,9 +4,9 @@
     class="absolute -left-3 top-4 z-10 bg-gray-700 border border-gray-600 rounded-full p-1 hover:bg-gray-600 shadow-lg transition-colors"
   >
     @if (rightSidebarCollapsed()) {
-      <span class="w-4 h-4 text-gray-300">◀</span>
+      <lucide-angular [img]="ChevronLeft" class="w-4 h-4 text-gray-300"></lucide-angular>
     } @else {
-      <span class="w-4 h-4 text-gray-300">▶</span>
+      <lucide-angular [img]="ChevronRight" class="w-4 h-4 text-gray-300"></lucide-angular>
     }
   </button>
 
@@ -17,13 +17,13 @@
         class="w-full flex items-center justify-between mb-3 hover:bg-gray-700 p-2 rounded transition-colors"
       >
         <h3 class="font-semibold text-gray-300 flex items-center gap-2">
-          <span class="w-4 h-4">📅</span>
+          <lucide-angular [img]="Calendar" class="w-4 h-4"></lucide-angular>
           工作日曆
         </h3>
         @if (calendarCollapsed()) {
-          <span class="w-4 h-4 text-gray-400">▼</span>
+          <lucide-angular [img]="ChevronDown" class="w-4 h-4 text-gray-400"></lucide-angular>
         } @else {
-          <span class="w-4 h-4 text-gray-400">▲</span>
+          <lucide-angular [img]="ChevronUp" class="w-4 h-4 text-gray-400"></lucide-angular>
         }
       </button>
       
@@ -65,20 +65,20 @@
             class="flex items-center gap-2 hover:bg-gray-700 p-2 rounded flex-1 justify-between transition-colors"
           >
             <h3 class="font-semibold text-gray-300 flex items-center gap-2">
-              <span class="w-4 h-4">☑️</span>
+              <lucide-angular [img]="CheckSquare" class="w-4 h-4"></lucide-angular>
               今日工作
             </h3>
             @if (todayWorkCollapsed()) {
-              <span class="w-4 h-4 text-gray-400">▼</span>
+              <lucide-angular [img]="ChevronDown" class="w-4 h-4 text-gray-400"></lucide-angular>
             } @else {
-              <span class="w-4 h-4 text-gray-400">▲</span>
+              <lucide-angular [img]="ChevronUp" class="w-4 h-4 text-gray-400"></lucide-angular>
             }
           </button>
           <button 
             (click)="toggleNewTodo()"
             class="bg-blue-600 hover:bg-blue-500 text-white p-1 rounded ml-2 transition-colors"
           >
-            <span class="w-4 h-4">➕</span>
+            <lucide-angular [img]="Plus" class="w-4 h-4"></lucide-angular>
           </button>
         </div>
 
@@ -117,7 +117,7 @@
                   <span class="text-sm">{{ getTypeIcon(item.source) }}</span>
                   <span [class]="'text-xs font-medium ' + getProjectTypeColor(item.type)">{{ item.type }}</span>
                 </div>
-                <span class="w-3 h-3 text-gray-400">🕐</span>
+                <lucide-angular [img]="Clock" class="w-3 h-3 text-gray-400"></lucide-angular>
               </div>
               <h4 class="font-medium text-gray-300 text-sm mb-2">{{ item.title }}</h4>
               <div class="flex items-center justify-between text-xs">
@@ -132,7 +132,7 @@
       } @else {
         <div class="flex-1 flex items-center justify-center">
           <div class="text-gray-400 text-center">
-            <span class="w-6 h-6 mx-auto mb-2 block text-lg">☑️</span>
+            <lucide-angular [img]="CheckSquare" class="w-6 h-6 mx-auto mb-2"></lucide-angular>
             <div class="text-lg font-bold text-gray-300">3</div>
             <p class="text-xs">今日任務</p>
           </div>
@@ -141,8 +141,8 @@
     </div>
   } @else {
     <div class="flex-1 flex flex-col items-center py-4 gap-4">
-      <span class="w-6 h-6 text-gray-400 text-lg">📅</span>
-      <span class="w-6 h-6 text-gray-400 text-lg">☑️</span>
+      <lucide-angular [img]="Calendar" class="w-6 h-6 text-gray-400"></lucide-angular>
+      <lucide-angular [img]="CheckSquare" class="w-6 h-6 text-gray-400"></lucide-angular>
       <div class="text-center">
         <div class="text-lg font-bold text-gray-300">3</div>
         <div class="text-xs text-gray-400">今日</div>

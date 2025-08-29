@@ -1,19 +1,30 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../../services/chat';
+import { LucideAngularModule, MessageCircle, ChevronRight, ChevronLeft, Plus, Paperclip, Mic, Send, BarChart3, Calendar, Star } from 'lucide-angular';
 
 @Component({
   selector: 'app-chat-interface',
-  imports: [FormsModule],
+  imports: [FormsModule, LucideAngularModule
+  ],
   templateUrl: './chat-interface.html',
   styleUrl: './chat-interface.scss'
 })
 export class ChatInterfaceComponent {
   private chatService = inject(ChatService);
-  
+  MessageCircle = MessageCircle;
+  ChevronRight = ChevronRight;
+  ChevronLeft = ChevronLeft;
+  Plus = Plus;
+  Paperclip = Paperclip;
+  Mic = Mic;
+  Send = Send;
+  BarChart3 = BarChart3;
+  Calendar = Calendar;
+  Star = Star;
   leftInnerCollapsed = signal(false);
   chatMessage = signal('');
-  
+
   chatHistory = this.chatService.getChatHistory();
   messages = this.chatService.getMessages();
 

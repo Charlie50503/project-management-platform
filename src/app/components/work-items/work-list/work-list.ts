@@ -1,9 +1,10 @@
 import { Component, signal, inject } from '@angular/core';
 import { WorkItemService } from '../../../services/work-item';
+import { LucideAngularModule, ChevronRight, ChevronLeft, Folder, Clock } from 'lucide-angular';
 
 @Component({
   selector: 'app-work-list',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './work-list.html',
   styleUrl: './work-list.scss'
 })
@@ -12,6 +13,11 @@ export class WorkListComponent {
   
   leftOuterCollapsed = signal(false);
   activeTab = signal('all');
+  
+  ChevronRight = ChevronRight;
+  ChevronLeft = ChevronLeft;
+  Folder = Folder;
+  Clock = Clock;
   
   allWorkItems = this.workItemService.getAllWorkItems();
   

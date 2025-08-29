@@ -1,10 +1,11 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WorkItemService } from '../../../services/work-item';
+import { LucideAngularModule, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Calendar, CheckSquare, Plus, Clock } from 'lucide-angular';
 
 @Component({
   selector: 'app-calendar-widget',
-  imports: [FormsModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: './calendar-widget.html',
   styleUrl: './calendar-widget.scss'
 })
@@ -17,6 +18,15 @@ export class CalendarWidgetComponent {
   showNewTodo = signal(false);
   newTodo = signal('');
   selectedDate = signal(new Date());
+  
+  ChevronLeft = ChevronLeft;
+  ChevronRight = ChevronRight;
+  ChevronDown = ChevronDown;
+  ChevronUp = ChevronUp;
+  Calendar = Calendar;
+  CheckSquare = CheckSquare;
+  Plus = Plus;
+  Clock = Clock;
   
   todayWorkItems = this.workItemService.getTodayWorkItems();
 
