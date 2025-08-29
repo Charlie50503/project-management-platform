@@ -1,0 +1,32 @@
+<div class="w-14 bg-gray-800 flex flex-col border-r border-gray-700">
+  <ul class="flex flex-col">
+    <li class="flex w-full">
+      <button class="w-14 py-4 flex justify-center items-center text-white hover:bg-gray-700 group transition-colors">
+        <div class="p-2 rounded-full group-hover:bg-gray-600">
+          <div class="w-6 h-6 grid grid-cols-3 gap-0.5">
+            @for (item of Array(9); track $index) {
+              <div class="bg-white rounded-sm"></div>
+            }
+          </div>
+        </div>
+      </button>
+    </li>
+  </ul>
+  
+  <div class="flex-1 py-4">
+    @for (item of mainNavItems(); track item.path) {
+      <div class="flex w-full mb-2">
+        <button 
+          class="w-14 py-3 flex justify-center items-center text-white hover:bg-gray-700 group relative transition-colors"
+          [class.bg-gray-700]="item.active"
+          [title]="item.label"
+        >
+          <span class="w-5 h-5 text-lg">{{ item.icon }}</span>
+          @if (item.active) {
+            <div class="absolute right-0 top-0 bottom-0 w-1 bg-sky-500"></div>
+          }
+        </button>
+      </div>
+    }
+  </div>
+</div>

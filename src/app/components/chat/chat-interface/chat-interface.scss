@@ -1,0 +1,49 @@
+/* 聊天介面響應式樣式 */
+.chat-interface {
+  /* 確保聊天介面能夠自適應寬度 */
+  width: 100%;
+  min-width: 320px; /* 最小寬度，確保在小螢幕上仍可使用 */
+  max-width: 100%;
+}
+
+/* 響應式斷點 */
+@media (max-width: 768px) {
+  /* 在小螢幕上調整訊息最大寬度 */
+  .message-bubble {
+    max-width: 85% !important;
+  }
+  
+  /* 調整輸入框在小螢幕上的樣式 */
+  .chat-input {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 在極小螢幕上進一步調整 */
+  .message-bubble {
+    max-width: 90% !important;
+  }
+  
+  .chat-header {
+    padding: 0.75rem;
+  }
+  
+  .chat-input-container {
+    padding: 0.75rem;
+  }
+}
+
+/* 確保聊天區域能夠正確滾動 */
+.chat-messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* 優化長文本的顯示 */
+.message-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}

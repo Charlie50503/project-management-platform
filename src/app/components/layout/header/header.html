@@ -1,0 +1,38 @@
+<div class="bg-gray-800 text-white px-6 py-3 flex items-center justify-between border-b border-gray-700">
+  <div class="flex items-center gap-4">
+    <button class="p-2 hover:bg-gray-700 rounded transition-colors">
+      <div class="w-6 h-6 grid grid-cols-3 gap-0.5">
+        @for (item of Array(9); track $index) {
+          <div class="bg-white rounded-sm"></div>
+        }
+      </div>
+    </button>
+    <h1 class="text-xl font-bold">專案管理平台</h1>
+    <span class="text-gray-400 text-sm">(UAT測試)</span>
+  </div>
+  
+  <div class="flex-1 max-w-md mx-8">
+    <div class="relative">
+      <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+      <input 
+        type="text" 
+        placeholder="搜尋系統..." 
+        class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <button class="p-2 hover:bg-gray-700 rounded-full relative transition-colors">
+      <span class="w-5 h-5">🔔</span>
+      <span class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+    </button>
+    <button class="flex items-center gap-2 hover:bg-gray-700 px-3 py-2 rounded transition-colors">
+      <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center border border-gray-600">古</div>
+      <span>古家寧</span>
+    </button>
+    <button class="p-2 hover:bg-gray-700 rounded transition-colors">
+      <span class="w-5 h-5">⚙️</span>
+    </button>
+  </div>
+</div>

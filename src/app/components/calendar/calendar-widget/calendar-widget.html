@@ -1,0 +1,152 @@
+<div [class]="rightSidebarCollapsed() ? 'w-8' : 'w-80'" class="bg-gray-800 border-l border-gray-700 flex flex-col transition-all duration-300 relative">
+  <button 
+    (click)="toggleSidebar()"
+    class="absolute -left-3 top-4 z-10 bg-gray-700 border border-gray-600 rounded-full p-1 hover:bg-gray-600 shadow-lg transition-colors"
+  >
+    @if (rightSidebarCollapsed()) {
+      <span class="w-4 h-4 text-gray-300">◀</span>
+    } @else {
+      <span class="w-4 h-4 text-gray-300">▶</span>
+    }
+  </button>
+
+  @if (!rightSidebarCollapsed()) {
+    <div class="border-b border-gray-700 p-4">
+      <button 
+        (click)="toggleCalendar()"
+        class="w-full flex items-center justify-between mb-3 hover:bg-gray-700 p-2 rounded transition-colors"
+      >
+        <h3 class="font-semibold text-gray-300 flex items-center gap-2">
+          <span class="w-4 h-4">📅</span>
+          工作日曆
+        </h3>
+        @if (calendarCollapsed()) {
+          <span class="w-4 h-4 text-gray-400">▼</span>
+        } @else {
+          <span class="w-4 h-4 text-gray-400">▲</span>
+        }
+      </button>
+      
+      @if (!calendarCollapsed()) {
+        <div class="bg-gray-700 rounded-lg p-3 border border-gray-600">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-medium text-gray-300">
+              {{ selectedDate().getFullYear() }}年{{ selectedDate().getMonth() + 1 }}月
+            </h4>
+            <div class="flex gap-1">
+              <button class="text-gray-400 hover:text-gray-300 p-1 rounded hover:bg-gray-600 transition-colors">&lt;</button>
+              <button class="text-gray-400 hover:text-gray-300 p-1 rounded hover:bg-gray-600 transition-colors">&gt;</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-xs text-center">
+            @for (day of ['日', '一', '二', '三', '四', '五', '六']; track day) {
+              <div class="text-gray-400 font-medium py-1">{{ day }}</div>
+            }
+            @for (day of generateCalendar(); track $index) {
+              <button 
+                [class]="'py-1 hover:bg-blue-600 rounded transition-colors ' + 
+                  (isToday(day) 
+                    ? 'bg-blue-600 text-white' 
+                    : day ? 'text-gray-300 hover:text-white' : 'text-transparent')"
+              >
+                {{ day || '' }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="flex-1 flex flex-col">
+      <div class="p-4 border-b border-gray-700">
+        <div class="flex items-center justify-between mb-3">
+          <button 
+            (click)="toggleTodayWork()"
+            class="flex items-center gap-2 hover:bg-gray-700 p-2 rounded flex-1 justify-between transition-colors"
+          >
+            <h3 class="font-semibold text-gray-300 flex items-center gap-2">
+              <span class="w-4 h-4">☑️</span>
+              今日工作
+            </h3>
+            @if (todayWorkCollapsed()) {
+              <span class="w-4 h-4 text-gray-400">▼</span>
+            } @else {
+              <span class="w-4 h-4 text-gray-400">▲</span>
+            }
+          </button>
+          <button 
+            (click)="toggleNewTodo()"
+            class="bg-blue-600 hover:bg-blue-500 text-white p-1 rounded ml-2 transition-colors"
+          >
+            <span class="w-4 h-4">➕</span>
+          </button>
+        </div>
+
+        @if (!todayWorkCollapsed() && showNewTodo()) {
+          <div class="mb-3 p-2 bg-gray-700 rounded border border-gray-600">
+            <input
+              type="text"
+              [(ngModel)]="newTodo"
+              placeholder="新增今日代辦事項..."
+              class="w-full p-2 bg-gray-800 border border-gray-600 rounded text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+            <div class="flex gap-2 mt-2">
+              <button 
+                (click)="addNewTodo()"
+                class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-500 transition-colors"
+              >
+                新增
+              </button>
+              <button 
+                (click)="cancelNewTodo()"
+                class="px-3 py-1 text-gray-400 text-xs rounded hover:bg-gray-600 transition-colors"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (!todayWorkCollapsed()) {
+        <div class="flex-1 overflow-y-auto">
+          @for (item of todayWorkItems(); track item.id) {
+            <div [class]="'m-3 p-3 rounded-lg border-l-4 ' + getPriorityColor(item.priority) + ' bg-gray-700 hover:shadow-lg transition-all cursor-pointer border border-gray-600'">
+              <div class="flex items-start justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm">{{ getTypeIcon(item.source) }}</span>
+                  <span [class]="'text-xs font-medium ' + getProjectTypeColor(item.type)">{{ item.type }}</span>
+                </div>
+                <span class="w-3 h-3 text-gray-400">🕐</span>
+              </div>
+              <h4 class="font-medium text-gray-300 text-sm mb-2">{{ item.title }}</h4>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-gray-400">今天</span>
+                <span [class]="'px-2 py-0.5 rounded-full text-xs ' + getStatusColor(item.status)">
+                  {{ item.status }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="flex-1 flex items-center justify-center">
+          <div class="text-gray-400 text-center">
+            <span class="w-6 h-6 mx-auto mb-2 block text-lg">☑️</span>
+            <div class="text-lg font-bold text-gray-300">3</div>
+            <p class="text-xs">今日任務</p>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="flex-1 flex flex-col items-center py-4 gap-4">
+      <span class="w-6 h-6 text-gray-400 text-lg">📅</span>
+      <span class="w-6 h-6 text-gray-400 text-lg">☑️</span>
+      <div class="text-center">
+        <div class="text-lg font-bold text-gray-300">3</div>
+        <div class="text-xs text-gray-400">今日</div>
+      </div>
+    </div>
+  }
+</div>

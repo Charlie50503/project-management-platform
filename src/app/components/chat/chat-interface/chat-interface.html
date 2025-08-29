@@ -1,0 +1,140 @@
+<div class="flex h-full">
+<!-- Left Inner Sidebar - Chat History -->
+<div [class]="leftInnerCollapsed() ? 'w-8' : 'w-64'" class="bg-gray-700 border-r border-gray-600 flex flex-col transition-all duration-300 relative">
+  <button 
+    (click)="toggleCollapse()"
+    class="absolute -right-3 top-4 z-10 bg-gray-600 border border-gray-500 rounded-full p-1 hover:bg-gray-500 shadow-lg transition-colors"
+  >
+    @if (leftInnerCollapsed()) {
+      <span class="w-4 h-4 text-gray-300">▶</span>
+    } @else {
+      <span class="w-4 h-4 text-gray-300">◀</span>
+    }
+  </button>
+
+  @if (!leftInnerCollapsed()) {
+    <div class="p-4 border-b border-gray-600">
+      <h3 class="font-semibold text-gray-300 mb-3 flex items-center gap-2">
+        <span class="w-4 h-4">💬</span>
+        對話記錄
+      </h3>
+      <button class="w-full p-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors flex items-center gap-2">
+        <span class="w-4 h-4">➕</span>
+        開始新對話
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 space-y-2">
+      @for (chat of chatHistory(); track chat.id) {
+        <div 
+          (click)="setActiveChat(chat.id)"
+          [class]="'p-3 rounded-lg border cursor-pointer group transition-all relative ' + 
+            (chat.active 
+              ? 'bg-gray-600 border-blue-500' 
+              : 'bg-gray-800 border-gray-600 hover:bg-gray-600 hover:border-gray-500')"
+        >
+          <div class="flex items-center justify-between mb-1">
+            <h4 [class]="'text-sm font-medium truncate ' + 
+              (chat.active ? 'text-blue-400' : 'text-gray-300 group-hover:text-blue-400')">
+              {{ chat.title }}
+            </h4>
+            <span class="text-xs text-gray-400 shrink-0 ml-2">{{ chat.time }}</span>
+          </div>
+          <p class="text-xs text-gray-400">{{ chat.preview }}</p>
+          @if (chat.active) {
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r"></div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="flex-1 flex flex-col items-center py-4 gap-4">
+      <span class="w-5 h-5 text-gray-400 text-lg">💬</span>
+      <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+    </div>
+  }
+</div>
+
+<!-- Main Content Area - Chat Interface -->
+<div class="flex-1 flex flex-col bg-gray-800 min-w-0 max-w-full">
+  <div class="p-4 border-b border-gray-700 bg-gray-700">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-700 rounded-lg flex items-center justify-center">
+          <span class="w-5 h-5 text-white text-lg">💬</span>
+        </div>
+        <div>
+          <h2 class="font-semibold text-gray-300">AI 工作助手</h2>
+          <p class="text-sm text-gray-400">協助管理您的工作項目與日程安排</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs bg-green-900 text-green-400 px-2 py-1 rounded-full border border-green-600">● 線上</span>
+        <button class="p-2 hover:bg-gray-600 rounded text-gray-400 transition-colors">
+          <span class="w-4 h-4">⭐</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-4 space-y-4">
+    <div class="text-center text-gray-400 text-sm py-4">
+      <div class="inline-block bg-gray-700 px-4 py-2 rounded-full border border-gray-600">
+        今天 - {{ getCurrentDate() }}
+      </div>
+    </div>
+    @for (message of messages(); track message.id) {
+      <div [class]="'flex ' + (message.type === 'user' ? 'justify-end' : 'justify-start')">
+        <div [class]="'max-w-[70%] p-3 rounded-lg ' + 
+          (message.type === 'user' 
+            ? 'bg-blue-600 text-white' 
+            : 'bg-gray-700 text-gray-300 border border-gray-600')"
+        >
+          <p class="text-sm whitespace-pre-line">{{ message.content }}</p>
+          <p [class]="'text-xs mt-1 ' + (message.type === 'user' ? 'text-blue-100' : 'text-gray-400')">
+            {{ message.time }}
+          </p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="p-4 border-t border-gray-700 bg-gray-700">
+    <div class="flex gap-3">
+      <div class="flex-1 relative">
+        <input
+          type="text"
+          [(ngModel)]="chatMessage"
+          (keypress)="onKeyPress($event)"
+          placeholder="輸入訊息或詢問工作相關問題..."
+          class="w-full p-3 pr-20 bg-gray-800 text-gray-300 placeholder-gray-500 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
+          <button class="p-1.5 hover:bg-gray-600 rounded text-gray-400 transition-colors">
+            <span class="w-4 h-4">📎</span>
+          </button>
+          <button class="p-1.5 hover:bg-gray-600 rounded text-gray-400 transition-colors">
+            <span class="w-4 h-4">🎤</span>
+          </button>
+        </div>
+      </div>
+      <button 
+        class="bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        (click)="sendMessage()"
+        [disabled]="!chatMessage().trim()"
+      >
+        <span class="w-4 h-4">📤</span>
+      </button>
+    </div>
+    <div class="flex gap-2 mt-2">
+      <button class="text-xs text-gray-400 hover:text-blue-400 bg-gray-800 px-2 py-1 rounded border border-gray-600 transition-colors">
+        📊 分析今日工作
+      </button>
+      <button class="text-xs text-gray-400 hover:text-blue-400 bg-gray-800 px-2 py-1 rounded border border-gray-600 transition-colors">
+        📅 安排會議
+      </button>
+    </div>
+  </div>
+</div>
+
+</div>
