@@ -2,12 +2,41 @@ import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WorkItemService } from '../../../services/work-item';
 import { LucideAngularModule, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Calendar, CheckSquare, Plus, Clock } from 'lucide-angular';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { NativeDateAdapter } from '@angular/material/core';
+
+export class CustomDateAdapter extends NativeDateAdapter {
+  override getDateNames(): string[] {
+    const dateNames: string[] = [];
+    for (let i = 1; i <= 31; i++) {
+      dateNames.push(String(i));
+    }
+    return dateNames;
+  }
+}
+
+export const CUSTOM_DATE_FORMATS = {
+  parse: {
+    dateInput: 'YYYY/MM/DD',
+  },
+  display: {
+    dateInput: 'YYYY/MM/DD',
+    monthYearLabel: 'YYYY年MM月',
+    dateA11yLabel: 'YYYY/MM/DD',
+    monthYearA11yLabel: 'YYYY年MM月',
+  },
+};
 
 @Component({
   selector: 'app-calendar-widget',
-  imports: [FormsModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule, MatDatepickerModule, MatNativeDateModule],
   templateUrl: './calendar-widget.html',
-  styleUrl: './calendar-widget.scss'
+  styleUrl: './calendar-widget.scss',
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS }
+  ]
 })
 export class CalendarWidgetComponent {
   private workItemService = inject(WorkItemService);
@@ -17,7 +46,7 @@ export class CalendarWidgetComponent {
   todayWorkCollapsed = signal(false);
   showNewTodo = signal(false);
   newTodo = signal('');
-  selectedDate = signal(new Date());
+  selected = signal<Date | null>(new Date());
   
   ChevronLeft = ChevronLeft;
   ChevronRight = ChevronRight;
@@ -59,36 +88,7 @@ export class CalendarWidgetComponent {
     this.newTodo.set('');
   }
 
-  generateCalendar(): (number | null)[] {
-    const date = this.selectedDate();
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const firstDayOfWeek = firstDay.getDay();
-    const daysInMonth = lastDay.getDate();
-    
-    const days: (number | null)[] = [];
-    
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      days.push(null);
-    }
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-    
-    return days;
-  }
 
-  isToday(day: number | null): boolean {
-    if (!day) return false;
-    const today = new Date();
-    const selected = this.selectedDate();
-    return day === today.getDate() && 
-           selected.getMonth() === today.getMonth() && 
-           selected.getFullYear() === today.getFullYear();
-  }
 
   getPriorityColor(priority: string): string {
     return this.workItemService.getPriorityColor(priority);

@@ -1,0 +1,52 @@
+.calendar-dark-theme {
+  ::ng-deep {
+    .mat-calendar {
+      background-color: transparent;
+      color: #d1d5db;
+    }
+
+    .mat-calendar-header {
+      color: #d1d5db;
+    }
+
+    .mat-calendar-table-header th {
+      color: #9ca3af;
+    }
+
+    .mat-calendar-body-cell-content {
+      color: #d1d5db;
+      border-radius: 4px;
+    }
+
+    .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+      background-color: #374151;
+    }
+
+    .mat-calendar-body-selected {
+      background-color: #2563eb !important;
+      color: white !important;
+    }
+
+    .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+      border-color: #2563eb;
+    }
+
+    .mat-calendar-previous-button,
+    .mat-calendar-next-button {
+      color: #9ca3af;
+    }
+
+    .mat-calendar-previous-button:hover,
+    .mat-calendar-next-button:hover {
+      background-color: #374151;
+    }
+
+    .mat-calendar-period-button {
+      color: #d1d5db;
+    }
+
+    .mat-calendar-period-button:hover {
+      background-color: #374151;
+    }
+  }
+}
