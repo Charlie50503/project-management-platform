@@ -86,25 +86,110 @@
       </div>
 
       @if (!todayWorkCollapsed()) {
+        <!-- Tab Navigation -->
+        <div class="px-4 py-2 border-b border-gray-700">
+          <div class="flex gap-1">
+            <button
+              (click)="setCurrentView('active')"
+              [class]="'px-3 py-1 text-xs rounded flex items-center gap-1 transition-colors ' + 
+                (currentView() === 'active' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300')"
+            >
+              <lucide-angular [img]="Clock" class="w-3 h-3"></lucide-angular>
+              待辦
+              <span class="bg-white bg-opacity-20 px-1 rounded">{{ activeTodos().length }}</span>
+            </button>
+            <button
+              (click)="setCurrentView('completed')"
+              [class]="'px-3 py-1 text-xs rounded flex items-center gap-1 transition-colors ' + 
+                (currentView() === 'completed' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300')"
+            >
+              <lucide-angular [img]="Check" class="w-3 h-3"></lucide-angular>
+              完成
+              <span class="bg-white bg-opacity-20 px-1 rounded">{{ completedTodos().length }}</span>
+            </button>
+            <button
+              (click)="setCurrentView('all')"
+              [class]="'px-3 py-1 text-xs rounded flex items-center gap-1 transition-colors ' + 
+                (currentView() === 'all' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700 hover:text-gray-300')"
+            >
+              <lucide-angular [img]="Filter" class="w-3 h-3"></lucide-angular>
+              全部
+              <span class="bg-white bg-opacity-20 px-1 rounded">{{ allTodayWorkItems().length }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Todo List -->
         <div class="flex-1 overflow-y-auto">
-          @for (item of todayWorkItems(); track item.id) {
-            <div [class]="'m-3 p-3 rounded-lg border-l-4 ' + getPriorityColor(item.priority) + ' bg-gray-700 hover:shadow-lg transition-all cursor-pointer border border-gray-600'">
-              <div class="flex items-start justify-between mb-2">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm">{{ getTypeIcon(item.source) }}</span>
-                  <span [class]="'text-xs font-medium ' + getProjectTypeColor(item.type)">{{ item.type }}</span>
+          <div class="space-y-1 p-2">
+            @for (item of currentList(); track item.id) {
+              <div 
+                [draggable]="item.status !== 'completed'"
+                (dragstart)="handleDragStart($event, item)"
+                (dragover)="handleDragOver($event)"
+                (drop)="handleDrop($event, item)"
+                [class]="'group flex items-center gap-3 p-3 hover:bg-gray-700 rounded transition-colors ' + 
+                  (item.status !== 'completed' ? 'cursor-grab active:cursor-grabbing' : 'cursor-default')"
+              >
+                @if (item.status !== 'completed') {
+                  <lucide-angular [img]="GripVertical" class="w-3 h-3 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity"></lucide-angular>
+                }
+
+                <button
+                  (click)="toggleComplete(item)"
+                  [class]="'w-4 h-4 rounded border transition-colors flex items-center justify-center ' + 
+                    (item.status === 'completed' ? 'bg-green-500 border-green-500' : 'border-gray-500 hover:border-green-400')"
+                >
+                  @if (item.status === 'completed') {
+                    <lucide-angular [img]="Check" class="w-3 h-3 text-white"></lucide-angular>
+                  }
+                </button>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 [class]="'font-medium text-sm truncate transition-colors ' + 
+                      (item.status === 'completed' ? 'text-gray-500 line-through' : 'text-gray-300')">
+                      {{ item.title }}
+                    </h4>
+                  </div>
+                  <div class="flex items-center justify-between text-xs text-gray-400">
+                    <span>{{ item.type }}</span>
+                    <span [class]="'px-2 py-0.5 rounded-full text-xs ' + getStatusColor(item.status)">
+                      {{ item.status }}
+                    </span>
+                  </div>
                 </div>
-                <lucide-angular [img]="Clock" class="w-3 h-3 text-gray-400"></lucide-angular>
+
+                <button 
+                  (click)="deleteTodo(item)"
+                  class="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-600 rounded transition-opacity"
+                >
+                  <lucide-angular [img]="MoreHorizontal" class="w-3 h-3 text-gray-400"></lucide-angular>
+                </button>
               </div>
-              <h4 class="font-medium text-gray-300 text-sm mb-2">{{ item.title }}</h4>
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-400">今天</span>
-                <span [class]="'px-2 py-0.5 rounded-full text-xs ' + getStatusColor(item.status)">
-                  {{ item.status }}
-                </span>
+            }
+
+            @if (currentList().length === 0) {
+              <div class="text-center py-8 text-gray-400">
+                @if (currentView() === 'active') {
+                  <lucide-angular [img]="Check" class="w-12 h-12 mx-auto mb-3 opacity-50"></lucide-angular>
+                  <p class="text-sm mb-2">所有任務都完成了！</p>
+                  <button 
+                    (click)="toggleNewTodo()"
+                    class="text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    新增更多任務
+                  </button>
+                } @else if (currentView() === 'completed') {
+                  <lucide-angular [img]="Clock" class="w-12 h-12 mx-auto mb-3 opacity-50"></lucide-angular>
+                  <p class="text-sm">還沒有完成的任務</p>
+                } @else {
+                  <lucide-angular [img]="Plus" class="w-12 h-12 mx-auto mb-3 opacity-50"></lucide-angular>
+                  <p class="text-sm">還沒有任務</p>
+                }
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
       } @else {
         <div class="flex-1 flex items-center justify-center">

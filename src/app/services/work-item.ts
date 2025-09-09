@@ -59,6 +59,8 @@ export class WorkItemService {
 
   getStatusColor(status: string): string {
     switch (status) {
+      case 'active': return 'bg-blue-500 text-white';
+      case 'completed': return 'bg-green-500 text-white';
       case '需求梳理中': return 'bg-pink-300 text-gray-900';
       case '專管確認中': return 'bg-violet-300 text-gray-900';
       case '資訊PM預估時程中': return 'bg-sky-300 text-gray-900';
@@ -80,5 +82,55 @@ export class WorkItemService {
     if (type === '重大需求') return 'text-purple-300';
     if (type === '一般專案') return 'text-sky-500';
     return 'text-gray-400';
+  }
+
+  addTodoItem(item: Partial<WorkItem>) {
+    const newItem: WorkItem = {
+      id: item.id || Date.now(),
+      title: item.title || '',
+      type: item.type || '代辦事項',
+      priority: item.priority || 'medium',
+      dueDate: item.dueDate || new Date().toISOString().split('T')[0],
+      status: item.status || 'active',
+      source: item.source || 'todo'
+    };
+    
+    this.todayWorkItems.update(items => [newItem, ...items]);
+  }
+
+  toggleTodoComplete(id: number) {
+    this.todayWorkItems.update(items => 
+      items.map(item => 
+        item.id === id 
+          ? { 
+              ...item, 
+              status: item.status === 'completed' ? 'active' : 'completed'
+            }
+          : item
+      )
+    );
+  }
+
+  deleteTodoItem(id: number) {
+    this.todayWorkItems.update(items => 
+      items.filter(item => item.id !== id)
+    );
+  }
+
+  reorderTodoItems(draggedId: number, targetId: number) {
+    this.todayWorkItems.update(items => {
+      const activeItems = items.filter(item => item.status !== 'completed');
+      const completedItems = items.filter(item => item.status === 'completed');
+      
+      const dragIndex = activeItems.findIndex(item => item.id === draggedId);
+      const dropIndex = activeItems.findIndex(item => item.id === targetId);
+      
+      if (dragIndex !== -1 && dropIndex !== -1) {
+        const [draggedItem] = activeItems.splice(dragIndex, 1);
+        activeItems.splice(dropIndex, 0, draggedItem);
+      }
+      
+      return [...activeItems, ...completedItems];
+    });
   }
 }

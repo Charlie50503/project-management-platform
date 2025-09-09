@@ -1,7 +1,7 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { WorkItemService } from '../../../services/work-item';
-import { LucideAngularModule, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Calendar, CheckSquare, Plus, Clock } from 'lucide-angular';
+import { LucideAngularModule, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Calendar, CheckSquare, Plus, Clock, Check, Filter, GripVertical, MoreHorizontal } from 'lucide-angular';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { NativeDateAdapter } from '@angular/material/core';
@@ -47,6 +47,8 @@ export class CalendarWidgetComponent {
   showNewTodo = signal(false);
   newTodo = signal('');
   selected = signal<Date | null>(new Date());
+  currentView = signal<'active' | 'completed' | 'all'>('active');
+  draggedItem = signal<any>(null);
   
   ChevronLeft = ChevronLeft;
   ChevronRight = ChevronRight;
@@ -56,8 +58,29 @@ export class CalendarWidgetComponent {
   CheckSquare = CheckSquare;
   Plus = Plus;
   Clock = Clock;
+  Check = Check;
+  Filter = Filter;
+  GripVertical = GripVertical;
+  MoreHorizontal = MoreHorizontal;
   
-  todayWorkItems = this.workItemService.getTodayWorkItems();
+  allTodayWorkItems = this.workItemService.getTodayWorkItems();
+  
+  activeTodos = computed(() => 
+    this.allTodayWorkItems().filter(item => item.status !== 'completed')
+  );
+  
+  completedTodos = computed(() => 
+    this.allTodayWorkItems().filter(item => item.status === 'completed')
+  );
+  
+  currentList = computed(() => {
+    switch (this.currentView()) {
+      case 'active': return this.activeTodos();
+      case 'completed': return this.completedTodos();
+      case 'all': return this.allTodayWorkItems();
+      default: return this.activeTodos();
+    }
+  });
 
   toggleSidebar() {
     this.rightSidebarCollapsed.update(collapsed => !collapsed);
@@ -77,7 +100,14 @@ export class CalendarWidgetComponent {
 
   addNewTodo() {
     if (this.newTodo().trim()) {
-      // 這裡可以添加新的 todo 邏輯
+      this.workItemService.addTodoItem({
+        id: Date.now(),
+        title: this.newTodo().trim(),
+        status: 'active',
+        type: '代辦事項',
+        source: 'todo',
+        dueDate: new Date().toISOString().split('T')[0]
+      });
       this.showNewTodo.set(false);
       this.newTodo.set('');
     }
@@ -88,11 +118,44 @@ export class CalendarWidgetComponent {
     this.newTodo.set('');
   }
 
-
-
-  getPriorityColor(priority: string): string {
-    return this.workItemService.getPriorityColor(priority);
+  setCurrentView(view: 'active' | 'completed' | 'all') {
+    this.currentView.set(view);
   }
+
+  toggleComplete(item: any) {
+    this.workItemService.toggleTodoComplete(item.id);
+  }
+
+  deleteTodo(item: any) {
+    this.workItemService.deleteTodoItem(item.id);
+  }
+
+  handleDragStart(event: DragEvent, item: any) {
+    this.draggedItem.set(item);
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+    }
+  }
+
+  handleDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+  }
+
+  handleDrop(event: DragEvent, dropTarget: any) {
+    event.preventDefault();
+    const draggedItem = this.draggedItem();
+    if (draggedItem && draggedItem.id !== dropTarget.id) {
+      this.workItemService.reorderTodoItems(draggedItem.id, dropTarget.id);
+    }
+    this.draggedItem.set(null);
+  }
+
+
+
+
 
   getTypeIcon(source: string): string {
     return this.workItemService.getTypeIcon(source);
